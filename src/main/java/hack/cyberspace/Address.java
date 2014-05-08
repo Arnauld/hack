@@ -1,9 +1,10 @@
-package hack.lang;
+package hack.cyberspace;
 
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
 public class Address {
+
     public static Address get(int x, int y) {
         return new Address(x, y);
     }
@@ -14,6 +15,14 @@ public class Address {
     public Address(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public int x() {
+        return x;
+    }
+
+    public int y() {
+        return y;
     }
 
     @Override
@@ -34,6 +43,10 @@ public class Address {
 
     @Override
     public String toString() {
-        return "Address{" + x + ", " + y + '}';
+        return "#{" + x + ", " + y + "}";
+    }
+
+    public Address move(int dx, int dy) {
+        return Address.get(x + dx, y + dy);
     }
 }

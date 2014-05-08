@@ -12,13 +12,17 @@ import org.parboiled.support.ParsingResult;
 public class HackParboiledParserExecutor {
     private boolean trace = false;
 
+    public HackParboiledParserExecutor trace(boolean trace) {
+        this.trace = trace;
+        return this;
+    }
+
     public static void dumpNode(ParsingResult<Object> result) {
         System.out.println("HackParboiledParser.parse(" + ParseTreeUtils.printNodeTree(result) + ")");
     }
 
     public ParsingResult<Object> parse(String input) {
         HackParboiledParser parser = Parboiled.createParser(HackParboiledParser.class);
-
         ParsingResult<Object> result = execute(input, parser);
 
         if (result.hasErrors()) {
@@ -34,7 +38,4 @@ public class HackParboiledParserExecutor {
             return new ReportingParseRunner<Object>(parser.Program()).run(input);
     }
 
-    public void trace(boolean trace) {
-        this.trace = trace;
-    }
 }
