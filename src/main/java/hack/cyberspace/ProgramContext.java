@@ -11,10 +11,10 @@ public class ProgramContext {
 
 
     public ProgramContext(Address location, Grid grid) {
-        this(0, location, Direction.North, grid);
+        this(0, location, grid, Direction.North);
     }
 
-    public ProgramContext(int nextInstr, Address location, Direction direction, Grid grid) {
+    public ProgramContext(int nextInstr, Address location, Grid grid, Direction direction) {
         this.nextInstr = nextInstr;
         this.location = location;
         this.direction = direction;
@@ -38,11 +38,11 @@ public class ProgramContext {
     }
 
     public ProgramContext withNextInstr(int nextInstr) {
-        return new ProgramContext(nextInstr, programAddress(), direction(), grid());
+        return new ProgramContext(nextInstr, programAddress(), grid(), direction());
     }
 
-    public InstrContext asInstrContext() {
-        return new InstrContext(programAddress(), grid(), direction());
+    public InstrContext asInstrContext(Program program) {
+        return new InstrContext(program, programAddress(), grid(), direction());
     }
 
     public ProgramContext adjustWith(InstrExecution execution) {
@@ -52,6 +52,10 @@ public class ProgramContext {
             grid.cellAt(oldLocation).onLeave();
             grid.cellAt(newLocation).onEnter();
         }
-        return new ProgramContext(nextInstr, newLocation, execution.getDirection(), execution.getGrid());
+        return new ProgramContext(
+                execution.getNextInstr().orElse(nextInstr),
+                newLocation,
+                execution.getGrid(), execution.getDirection()
+        );
     }
 }

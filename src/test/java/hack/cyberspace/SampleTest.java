@@ -29,7 +29,7 @@ public class SampleTest {
         Cell cell = grid.cellAt(address(0, 0));
         assertThat(cell.canMoveTo()).isFalse();
 
-        ProgramContext programContext = new ProgramContext(0, address(0, 2), North, grid);
+        ProgramContext programContext = new ProgramContext(0, address(0, 2), grid, North);
 
         Program program = new Program();
         program.addInst(mov());
@@ -45,7 +45,7 @@ public class SampleTest {
         Cell cell = grid0.cellAt(address(0, 0));
         assertThat(cell.canMoveTo()).isFalse();
 
-        ProgramContext programContext = new ProgramContext(0, address(0, 1), North, grid0);
+        ProgramContext programContext = new ProgramContext(0, address(0, 1), grid0, North);
 
         Program program = new Program();
         program.addInst(mov());
@@ -59,7 +59,7 @@ public class SampleTest {
         Cell cell = grid0.cellAt(address(0, 0));
         assertThat(cell.canMoveTo()).isFalse();
 
-        ProgramContext context00 = new ProgramContext(0, address(0, 2), North, grid0);
+        ProgramContext context00 = new ProgramContext(0, address(0, 2), grid0, North);
 
         Program program = new Program();
         program.addInst(mov()); //1
@@ -110,7 +110,7 @@ public class SampleTest {
 
         UnTag star = new UnTag("star");
 
-        ProgramContext context00 = new ProgramContext(0, location, East, grid0);
+        ProgramContext context00 = new ProgramContext(0, location, grid0, East);
 
         Program program = new Program();
         program.addPreInstr(star);

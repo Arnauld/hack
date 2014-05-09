@@ -1,5 +1,7 @@
 package hack.cyberspace;
 
+import java.util.Optional;
+
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
@@ -12,11 +14,17 @@ public class InstrExecution {
     private final Address address;
     private final Grid grid;
     private final Direction direction;
+    private final Optional<Integer> nextInstr;
 
     public InstrExecution(Address address, Grid grid, Direction direction) {
+        this(address, grid, direction, Optional.empty());
+    }
+
+    public InstrExecution(Address address, Grid grid, Direction direction, Optional<Integer> nextInstr) {
         this.address = address;
         this.grid = grid;
         this.direction = direction;
+        this.nextInstr = nextInstr;
     }
 
     public boolean isValid() {
@@ -33,5 +41,9 @@ public class InstrExecution {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public Optional<Integer> getNextInstr() {
+        return nextInstr;
     }
 }

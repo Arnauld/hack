@@ -3,16 +3,20 @@ package hack.cyberspace.instr;
 import hack.cyberspace.Direction;
 import hack.cyberspace.InstrContext;
 import hack.cyberspace.InstrExecution;
+import hack.cyberspace.InstrSeq;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 public class RotTest {
     private InstrContext context;
+    private InstrSeq instrSeq;
 
     @Before
     public void setUp() {
+        instrSeq = Mockito.mock(InstrSeq.class);
         context = InstrHelpers.basicContext();
     }
 
@@ -39,7 +43,7 @@ public class RotTest {
     public void rot_should_adjust_direction() {
         Rot rot = new Rot(Rot.Angle.Left);
 
-        context = new InstrContext(InstrHelpers.ADDR_ZERO, InstrHelpers.newGrid2x2(), Direction.West);
+        context = new InstrContext(instrSeq, InstrHelpers.ADDR_ZERO, InstrHelpers.newGrid2x2(), Direction.West);
 
         InstrExecution execution = rot.execute(context);
         assertThat(execution.getDirection()).isEqualTo(Direction.South);
@@ -49,7 +53,7 @@ public class RotTest {
     public void rot_should_not_affect_grid_or_address() {
         Rot rot = new Rot(Rot.Angle.Left);
 
-        context = new InstrContext(InstrHelpers.ADDR_ZERO, InstrHelpers.newGrid2x2(), Direction.West);
+        context = new InstrContext(instrSeq, InstrHelpers.ADDR_ZERO, InstrHelpers.newGrid2x2(), Direction.West);
 
         InstrExecution execution = rot.execute(context);
         assertThat(execution.getAddress()).isEqualTo(InstrHelpers.ADDR_ZERO);
