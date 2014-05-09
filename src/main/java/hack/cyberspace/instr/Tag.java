@@ -1,7 +1,6 @@
 package hack.cyberspace.instr;
 
-import hack.cyberspace.Address;
-import hack.cyberspace.Grid;
+import hack.cyberspace.Cell;
 import hack.cyberspace.Instr;
 import hack.cyberspace.InstrContext;
 import hack.cyberspace.InstrExecution;
@@ -11,15 +10,25 @@ import hack.cyberspace.InstrExecution;
  */
 public class Tag extends Instr {
 
+    private static final int NOLIMIT = -1;
     private final String tag;
+    private final int max;
 
     public Tag(String tag) {
+        this(tag, 1);
+    }
+
+    public Tag(String tag, int max) {
         this.tag = tag;
+        this.max = max;
     }
 
     @Override
     public InstrExecution execute(InstrContext context) {
-        context.cell().tag(tag);
+        Cell cell = context.cell();
+        if (max == NOLIMIT || cell.tags().filter(t -> t.equalsIgnoreCase(tag)).count() < max) {
+            cell.tag(tag);
+        }
         return noop(context);
     }
 

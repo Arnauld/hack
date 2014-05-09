@@ -9,6 +9,9 @@ import org.junit.Test;
 
 import java.util.function.Predicate;
 
+import static hack.cyberspace.Address.address;
+import static hack.cyberspace.Direction.East;
+import static hack.cyberspace.Direction.North;
 import static hack.cyberspace.instr.Rot.Angle.Left;
 import static hack.cyberspace.instr.Rot.Angle.Right;
 import static org.fest.assertions.Assertions.assertThat;
@@ -23,71 +26,71 @@ public class SampleTest {
 
     @Test
     public void should_allow_to_move_on_free_cell() {
-        Grid grid0 = simpleGrid();
-        Cell cell = grid0.cellAt(Address.get(0, 0));
+        Grid grid = simpleGrid();
+        Cell cell = grid.cellAt(address(0, 0));
         assertThat(cell.canMoveTo()).isFalse();
 
-        Program program = new Program();
-        program.addInst(new Mov());
-        program.setDirection(Direction.North);
-        program.setLocation(Address.get(0, 2));
+        ProgramContext programContext = new ProgramContext(0, address(0, 2), North, grid);
 
-        Grid grid1 = program.executeNextInstruction(grid0);
-        assertThat(grid1).isNotNull();
-        assertThat(program.getLocation()).isEqualTo(Address.get(0, 1));
+        Program program = new Program();
+        program.addInst(MOV);
+
+        ProgramContext newContext = program.executeNextInstruction(programContext);
+        assertThat(newContext).isNotNull();
+        assertThat(newContext.programAddress()).isEqualTo(address(0, 1));
     }
 
     @Test(expected = IllegalInstructionException.class)
     public void should_not_allow_to_move_on_a_wall() {
         Grid grid0 = simpleGrid();
-        Cell cell = grid0.cellAt(Address.get(0, 0));
+        Cell cell = grid0.cellAt(address(0, 0));
         assertThat(cell.canMoveTo()).isFalse();
 
-        Program program = new Program();
-        program.addInst(new Mov());
-        program.setDirection(Direction.North);
-        program.setLocation(Address.get(0, 1));
+        ProgramContext programContext = new ProgramContext(0, address(0, 1), North, grid0);
 
-        program.executeNextInstruction(grid0);
+        Program program = new Program();
+        program.addInst(MOV);
+
+        program.executeNextInstruction(programContext);
     }
 
     @Test
     public void should_allow_to_move_sequentially_in_grid() {
         Grid grid0 = simpleGrid();
-        Cell cell = grid0.cellAt(Address.get(0, 0));
+        Cell cell = grid0.cellAt(address(0, 0));
         assertThat(cell.canMoveTo()).isFalse();
 
+        ProgramContext context00 = new ProgramContext(0, address(0, 2), North, grid0);
+
         Program program = new Program();
-        program.setDirection(Direction.North);
-        program.setLocation(Address.get(0, 2));
-        program.addInst(new Mov()); //1
+        program.addInst(MOV); //1
         program.addInst(new Rot(Right)); //2
-        program.addInst(new Mov()); //3
-        program.addInst(new Mov()); //4
+        program.addInst(MOV); //3
+        program.addInst(MOV); //4
         program.addInst(new Rot(Left)); //5
-        program.addInst(new Mov()); //6
+        program.addInst(MOV); //6
         program.addInst(new Rot(Right)); //7
-        program.addInst(new Mov()); //8
-        program.addInst(new Mov()); //9
+        program.addInst(MOV); //8
+        program.addInst(MOV); //9
         program.addInst(new Rot(Right)); //10
-        program.addInst(new Mov()); //11
-        program.addInst(new Mov()); //12
+        program.addInst(MOV); //11
+        program.addInst(MOV); //12
 
-        Grid grid01 = program.executeNextInstruction(grid0);
-        Grid grid02 = program.executeNextInstruction(grid01);
-        Grid grid03 = program.executeNextInstruction(grid02);
-        Grid grid04 = program.executeNextInstruction(grid03);
-        Grid grid05 = program.executeNextInstruction(grid04);
-        Grid grid06 = program.executeNextInstruction(grid05);
-        Grid grid07 = program.executeNextInstruction(grid06);
-        Grid grid08 = program.executeNextInstruction(grid07);
-        Grid grid09 = program.executeNextInstruction(grid08);
-        Grid grid10 = program.executeNextInstruction(grid09);
-        Grid grid11 = program.executeNextInstruction(grid10);
-        Grid grid12 = program.executeNextInstruction(grid11);
+        ProgramContext context01 = program.executeNextInstruction(context00);
+        ProgramContext context02 = program.executeNextInstruction(context01);
+        ProgramContext context03 = program.executeNextInstruction(context02);
+        ProgramContext context04 = program.executeNextInstruction(context03);
+        ProgramContext context05 = program.executeNextInstruction(context04);
+        ProgramContext context06 = program.executeNextInstruction(context05);
+        ProgramContext context07 = program.executeNextInstruction(context06);
+        ProgramContext context08 = program.executeNextInstruction(context07);
+        ProgramContext context09 = program.executeNextInstruction(context08);
+        ProgramContext context10 = program.executeNextInstruction(context09);
+        ProgramContext context11 = program.executeNextInstruction(context10);
+        ProgramContext context12 = program.executeNextInstruction(context11);
 
-        assertThat(grid12).isNotNull();
-        assertThat(program.getLocation()).isEqualTo(Address.get(4, 2));
+        assertThat(context12).isNotNull();
+        assertThat(context12.programAddress()).isEqualTo(address(4, 2));
     }
 
     @Test
@@ -104,13 +107,13 @@ public class SampleTest {
                 "....B...." + //
                 "";
         Grid grid0 = new GridBuilder().parse(grid).create();
-        Address location = Address.get(4, 4);
+        Address location = address(4, 4);
 
         UnTag star = new UnTag("star");
 
+        ProgramContext context00 = new ProgramContext(0, location, East, grid0);
+
         Program program = new Program();
-        program.setDirection(Direction.East);
-        program.setLocation(location);
         program.addPreInstr(star);
         program.addInst(MOV); //1
         program.addInst(new If(HasColor("r"), MOV)); //2
@@ -118,13 +121,13 @@ public class SampleTest {
         program.addInst(new If(HasColor("b"), new Rot(Left))); //4
         program.addInst(new If(HasColor("b"), new Rot(Left))); //5
 
-        Grid g = grid0;
+        ProgramContext context = context00;
         for (int i = 0; i < 200; i++) {
-            g = program.executeNextInstruction(g);
+            context = program.executeNextInstruction(context);
         }
-        assertThat(g).isNotNull();
+        assertThat(context).isNotNull();
         assertThat(star.untagCount()).isEqualTo(12);
-        assertThat(program.getLocation()).isEqualTo(Address.get(4, 4));
+        assertThat(context.programAddress()).isEqualTo(address(4, 4));
     }
 
     private Predicate<InstrContext> HasColor(String color) {

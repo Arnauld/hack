@@ -5,7 +5,7 @@ package hack.cyberspace;
  */
 public class Address {
 
-    public static Address get(int x, int y) {
+    public static Address address(int x, int y) {
         return new Address(x, y);
     }
 
@@ -47,6 +47,6 @@ public class Address {
     }
 
     public Address move(int dx, int dy) {
-        return Address.get(x + dx, y + dy);
+        return Address.address(x + dx, y + dy);
     }
 }

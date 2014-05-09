@@ -1,7 +1,5 @@
 package hack.cyberspace;
 
-import hack.cyberspace.instr.UnTag;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +9,6 @@ import java.util.List;
 public class Program {
     private List<Instr> preInstrs = new ArrayList<>();
     private List<Instr> instrs = new ArrayList<>();
-    private int nextInstr = 0;
-    private Address location;
-    private Direction direction = Direction.North;
 
 
     public Program addPreInstr(Instr instr) {
@@ -26,45 +21,22 @@ public class Program {
         return this;
     }
 
-    public Address getLocation() {
-        return location;
-    }
-
-    public void setLocation(Address location) {
-        this.location = location;
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    public Grid executeNextInstruction(Grid grid) {
-        Grid lastGrid = grid;
-        for(Instr instr : preInstrs) {
-            lastGrid = executeInstr(lastGrid, instr);
+    public ProgramContext executeNextInstruction(ProgramContext context) {
+        ProgramContext lastContext = context;
+        for (Instr instr : preInstrs) {
+            lastContext = executeInstr(context, instr);
         }
 
+        int nextInstr = context.nextInstr();
         Instr instr = instrs.get(nextInstr++ % instrs.size());
-        return executeInstr(lastGrid, instr);
+        return executeInstr(lastContext.withNextInstr(nextInstr), instr);
     }
 
-    private Grid executeInstr(Grid grid, Instr instr) {
-        InstrExecution execution = instr.execute(new InstrContext(location, grid, direction));
+    private ProgramContext executeInstr(ProgramContext programContext, Instr instr) {
+        InstrExecution execution = instr.execute(programContext.asInstrContext());
         if (execution.isValid()) {
-            this.location = execution.getAddress();
-            this.direction = execution.getDirection();
-            return execution.getGrid();
+            return programContext.adjustWith(execution);
         }
         throw new IllegalInstructionException(instr);
     }
-
-    @Override
-    public String toString() {
-        return "Program{" +
-                "instr=" + nextInstr +
-                ", location=" + location +
-                ", direction=" + direction +
-                '}';
-    }
-
 }

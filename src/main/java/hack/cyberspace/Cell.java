@@ -9,10 +9,12 @@ import java.util.stream.Stream;
  */
 public class Cell {
 
+    private int capacity = 1;
+    private int occupation = 0;
     private List<String> tags = new ArrayList<>();
 
     public boolean canMoveTo() {
-        return true;
+        return occupation < capacity;
     }
 
     public void tag(String tag) {
@@ -29,5 +31,34 @@ public class Cell {
 
     public boolean unTag(String tag) {
         return tags.remove(tag);
+    }
+
+    @Override
+    public String toString() {
+        return "Cell{" + tags + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Cell cell = (Cell) o;
+        return tags.equals(cell.tags);
+    }
+
+    @Override
+    public int hashCode() {
+        return tags.hashCode();
+    }
+
+    public void onEnter() {
+        if(!canMoveTo())
+            throw new IllegalStateException("Cell is either a wall or already full");
+        occupation++;
+    }
+
+    public void onLeave() {
+        occupation--;
     }
 }
