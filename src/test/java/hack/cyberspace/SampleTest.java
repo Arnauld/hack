@@ -11,6 +11,7 @@ import static hack.cyberspace.Cell.cell;
 import static hack.cyberspace.Direction.East;
 import static hack.cyberspace.Direction.North;
 import static hack.cyberspace.cell.Wall.wall;
+import static hack.cyberspace.instr.Jump.jump;
 import static hack.cyberspace.instr.Mov.mov;
 import static hack.cyberspace.instr.Rot.left;
 import static hack.cyberspace.instr.Rot.right;
@@ -127,6 +128,46 @@ public class SampleTest {
         assertThat(context).isNotNull();
         assertThat(star.untagCount()).isEqualTo(12);
         assertThat(context.programAddress()).isEqualTo(address(4, 4));
+    }
+
+    @Test
+    public void twoFunctions() {
+        String grid = "" + //
+                ".....B." + NL + // 0
+                "....bb." + NL + // 1
+                "...bb.." + NL + // 2
+                "..bb..." + NL + // 3
+                ".bb...." + NL + // 4
+                "bb....." + NL + // 5
+                "b......" + // 6
+                "";
+
+        Grid grid0 = new GridBuilder().parse(grid).create();
+        Address location = address(0, 6);
+
+        UnTag star = new UnTag("star");
+
+        ProgramContext context00 = new ProgramContext(0, location, grid0, North);
+
+        Program program = new Program();
+        //
+        program.addPreInstr(star);
+        program.addInst(mov().withLabel("f1")); //0
+        program.addInst(right()); //1
+        program.addInst(jump("f2")); //2
+        //
+        program.addInst(mov().withLabel("f2")); //3
+        program.addInst(left()); //4
+        program.addInst(jump("f1")); //5
+
+        ProgramContext context = context00;
+        for (int i = 0; i < 33; i++) {
+            context = program.executeNextInstruction(context);
+        }
+
+        assertThat(context).isNotNull();
+        assertThat(star.untagCount()).isEqualTo(1);
+        assertThat(context.programAddress()).isEqualTo(address(5, 0));
     }
 
     private Predicate<InstrContext> HasColor(String color) {
