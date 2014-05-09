@@ -10,4 +10,8 @@ public class Wall extends Cell {
     public boolean canMoveTo() {
         return false;
     }
+
+    public static Wall wall() {
+        return new Wall();
+    }
 }

@@ -1,19 +1,19 @@
 package hack.cyberspace;
 
-import hack.cyberspace.cell.Wall;
 import hack.cyberspace.instr.If;
-import hack.cyberspace.instr.Mov;
-import hack.cyberspace.instr.Rot;
 import hack.cyberspace.instr.UnTag;
 import org.junit.Test;
 
 import java.util.function.Predicate;
 
 import static hack.cyberspace.Address.address;
+import static hack.cyberspace.Cell.cell;
 import static hack.cyberspace.Direction.East;
 import static hack.cyberspace.Direction.North;
-import static hack.cyberspace.instr.Rot.Angle.Left;
-import static hack.cyberspace.instr.Rot.Angle.Right;
+import static hack.cyberspace.cell.Wall.wall;
+import static hack.cyberspace.instr.Mov.mov;
+import static hack.cyberspace.instr.Rot.left;
+import static hack.cyberspace.instr.Rot.right;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
@@ -21,7 +21,6 @@ import static org.fest.assertions.Assertions.assertThat;
  */
 public class SampleTest {
 
-    public static final Mov MOV = new Mov();
     private static final String NL = "\n";
 
     @Test
@@ -33,7 +32,7 @@ public class SampleTest {
         ProgramContext programContext = new ProgramContext(0, address(0, 2), North, grid);
 
         Program program = new Program();
-        program.addInst(MOV);
+        program.addInst(mov());
 
         ProgramContext newContext = program.executeNextInstruction(programContext);
         assertThat(newContext).isNotNull();
@@ -49,7 +48,7 @@ public class SampleTest {
         ProgramContext programContext = new ProgramContext(0, address(0, 1), North, grid0);
 
         Program program = new Program();
-        program.addInst(MOV);
+        program.addInst(mov());
 
         program.executeNextInstruction(programContext);
     }
@@ -63,18 +62,18 @@ public class SampleTest {
         ProgramContext context00 = new ProgramContext(0, address(0, 2), North, grid0);
 
         Program program = new Program();
-        program.addInst(MOV); //1
-        program.addInst(new Rot(Right)); //2
-        program.addInst(MOV); //3
-        program.addInst(MOV); //4
-        program.addInst(new Rot(Left)); //5
-        program.addInst(MOV); //6
-        program.addInst(new Rot(Right)); //7
-        program.addInst(MOV); //8
-        program.addInst(MOV); //9
-        program.addInst(new Rot(Right)); //10
-        program.addInst(MOV); //11
-        program.addInst(MOV); //12
+        program.addInst(mov()); //1
+        program.addInst(right()); //2
+        program.addInst(mov()); //3
+        program.addInst(mov()); //4
+        program.addInst(left()); //5
+        program.addInst(mov()); //6
+        program.addInst(right()); //7
+        program.addInst(mov()); //8
+        program.addInst(mov()); //9
+        program.addInst(right()); //10
+        program.addInst(mov()); //11
+        program.addInst(mov()); //12
 
         ProgramContext context01 = program.executeNextInstruction(context00);
         ProgramContext context02 = program.executeNextInstruction(context01);
@@ -115,11 +114,11 @@ public class SampleTest {
 
         Program program = new Program();
         program.addPreInstr(star);
-        program.addInst(MOV); //1
-        program.addInst(new If(HasColor("r"), MOV)); //2
-        program.addInst(new If(HasColor("g"), new Rot(Left))); //3
-        program.addInst(new If(HasColor("b"), new Rot(Left))); //4
-        program.addInst(new If(HasColor("b"), new Rot(Left))); //5
+        program.addInst(mov()); //1
+        program.addInst(new If(HasColor("r"), mov())); //2
+        program.addInst(new If(HasColor("g"), left())); //3
+        program.addInst(new If(HasColor("b"), left())); //4
+        program.addInst(new If(HasColor("b"), left())); //5
 
         ProgramContext context = context00;
         for (int i = 0; i < 200; i++) {
@@ -147,11 +146,4 @@ public class SampleTest {
         return builder.create();
     }
 
-    public static Wall wall() {
-        return new Wall();
-    }
-
-    public static Cell cell() {
-        return new Cell();
-    }
 }

@@ -10,9 +10,23 @@ import hack.cyberspace.InstrExecution;
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
-public class Mov extends Instr {
+public class Mov extends Instr<Mov> {
+
+    public static Mov mov() {
+        return new Mov();
+    }
 
     public Mov() {
+        this(null);
+    }
+
+    public Mov(String label) {
+        super(label);
+    }
+
+    @Override
+    public Mov withLabel(String label) {
+        return new Mov(label);
     }
 
     @Override
@@ -32,4 +46,5 @@ public class Mov extends Instr {
     public String toString() {
         return "Mov";
     }
+
 }

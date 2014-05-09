@@ -8,19 +8,29 @@ import hack.cyberspace.InstrExecution;
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
-public class Tag extends Instr {
+public class Tag extends Instr<Tag> {
 
     private static final int NOLIMIT = -1;
     private final String tag;
     private final int max;
 
     public Tag(String tag) {
-        this(tag, 1);
+        this(tag, null);
     }
 
-    public Tag(String tag, int max) {
+    public Tag(String tag, String label) {
+        this(tag, 1, label);
+    }
+
+    public Tag(String tag, int max, String label) {
+        super(label);
         this.tag = tag;
         this.max = max;
+    }
+
+    @Override
+    public Tag withLabel(String label) {
+        return new Tag(tag, max, label);
     }
 
     @Override

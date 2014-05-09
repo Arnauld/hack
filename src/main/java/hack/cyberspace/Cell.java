@@ -9,6 +9,10 @@ import java.util.stream.Stream;
  */
 public class Cell {
 
+    public static Cell cell() {
+        return new Cell();
+    }
+
     private int capacity = 1;
     private int occupation = 0;
     private List<String> tags = new ArrayList<>();
@@ -53,7 +57,7 @@ public class Cell {
     }
 
     public void onEnter() {
-        if(!canMoveTo())
+        if (!canMoveTo())
             throw new IllegalStateException("Cell is either a wall or already full");
         occupation++;
     }

@@ -135,7 +135,7 @@
                     <encoding>UTF-8</encoding>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <compilerArgument>-Xlint:unchecked -Xlint:deprecation</compilerArgument>
+                    <!--compilerArgument>-Xlint:unchecked -Xlint:deprecation</compilerArgument-->
                 </configuration>
             </plugin>
 

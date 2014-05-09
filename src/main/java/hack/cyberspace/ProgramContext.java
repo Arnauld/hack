@@ -48,7 +48,7 @@ public class ProgramContext {
     public ProgramContext adjustWith(InstrExecution execution) {
         Address oldLocation = programAddress();
         Address newLocation = execution.getAddress();
-        if(!oldLocation.equals(newLocation)) {
+        if (!oldLocation.equals(newLocation)) {
             grid.cellAt(oldLocation).onLeave();
             grid.cellAt(newLocation).onEnter();
         }
