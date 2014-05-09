@@ -1,7 +1,5 @@
 package hack.cyberspace;
 
-import java.util.Arrays;
-
 /**
  * @author <a href="http://twitter.com/aloyer">@aloyer</a>
  */
@@ -9,14 +7,24 @@ public class Grid {
     private final Cell[][] cells;
 
     public Grid(Cell[][] cells) {
+        if (cells == null)
+            throw new IllegalArgumentException("Cells cannot be null");
+        for (Cell[] rows : cells) {
+            if (rows == null) {
+                throw new IllegalArgumentException("Cells cannot contain null row");
+            }
+        }
+
         this.cells = cells;
     }
 
     public Cell cellAt(Address address) {
-        if (address.y() < cells.length) {
-            Cell[] row = cells[address.y()];
-            if (address.x() < row.length)
-                return row[address.x()];
+        int y = address.y();
+        if (y >= 0 && y < cells.length) {
+            Cell[] row = cells[y];
+            int x = address.x();
+            if (x >= 0 && x < row.length)
+                return row[x];
         }
         throw new SegFaultException(address);
     }
